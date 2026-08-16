@@ -225,7 +225,7 @@
                 <p><strong>📍 Адреса / Нова Пошта:</strong> {{ order.address }}</p>
                 <h4 style="color: #ff3300; margin-bottom: 5px;">Замовлені товари:</h4>
                 <ul>
-                    {% for item in order.items %}
+                    {% for item in order.items() %}
                     <li>• {{ item.name }} — {{ item.quantity }} шт. × {{ item.price }} грн</li>
                     {% endfor %}
                 </ul>
