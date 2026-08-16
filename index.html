@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Victoria Shop - Neon</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 30px; 
+            background-color: #0d0d0d; 
+            color: #ffffff; 
+        }
+
+        h1 { 
+            color: #ff0055; 
+            text-align: center; 
+            text-shadow: 0 0 10px #ff0055, 0 0 20px #ff0055; 
+            margin-bottom: 30px;
+        }
+
+        h2 { 
+            color: #ff3300; 
+            border-bottom: 1px solid #ff3300; 
+            padding-bottom: 5px; 
+            text-shadow: 0 0 5px #ff3300; 
+        }
+
+        .products { 
+            display: flex; 
+            gap: 25px; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+        }
+
+        .card { 
+            background: #171717; 
+            border: 2px solid #ff0055; 
+            padding: 15px; 
+            border-radius: 12px; 
+            width: 230px; 
+            text-align: center; 
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4); 
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.8);
+        }
+
+        .card img { 
+            width: 100%; 
+            height: 180px; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            border: 1px solid #ff0055; 
+            cursor: pointer;
+        }
+
+        .card h3 { color: #fff; margin: 10px 0 5px 0; }
+        .card p { color: #ff3300; font-weight: bold; font-size: 1.1em; text-shadow: 0 0 5px #ff3300; margin: 5px 0 15px 0; }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn { 
+            display: inline-block; 
+            padding: 9px 12px; 
+            background: #ff0055; 
+            color: white; 
+            text-decoration: none; 
+            border: none;
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer;
+            box-shadow: 0 0 10px #ff0055; 
+            transition: 0.2s; 
+            font-size: 0.9em;
+        }
+
+        .btn-secondary {
+            background: #222;
+            border: 1px solid #ff0055;
+            color: #ff0055;
+            box-shadow: 0 0 5px rgba(255,0,85,0.3);
+        }
+
+        .btn:hover { 
+            background: #ff3366; 
+            box-shadow: 0 0 20px #ff0055, 0 0 30px #ff0055; 
+        }
+
+        .btn-secondary:hover {
+            background: #ff0055;
+            color: white;
+        }
+
+        /* Кнопка Кошика */
+        .cart-icon-btn {
+            position: fixed;
+            top: 20px;
+            right: 25px;
+            background: #171717;
+            border: 2px solid #ff0055;
+            color: #ff0055;
+            padding: 12px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transition: 0.3s;
+        }
+
+        .cart-icon-btn:hover {
+            box-shadow: 0 0 25px rgba(255, 0, 85, 1);
+            transform: scale(1.05);
+        }
+
+        .cart-count {
+            background: #ff0055;
+            color: #fff;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 0.8em;
+            box-shadow: 0 0 8px #ff0055;
+        }
+
+        /* Модальні вікна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+.modal-content {
+            background: #171717;
+            border: 2px solid #ff3300;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 0 25px rgba(255, 51, 0, 0.6);
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #ff0055;
+            font-size: 1.8em;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .cart-list { list-style: none; padding: 0; margin: 0; }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .remove-btn {
+            background: #ff0033;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            margin-left: 10px;
+            box-shadow: 0 0 5px #ff0033;
+            transition: 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #ff3355;
+            box-shadow: 0 0 12px #ff0033;
+        }
+
+        .gallery-main-img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #ff0055;
+            margin-bottom: 12px;
+        }
+
+        .gallery-thumbs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .gallery-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #555;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .gallery-thumb.active, .gallery-thumb:hover {
+            border-color: #ff0055;
+            box-shadow: 0 0 8px #ff0055;
+        }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; color: #ff0055; }
+        .form-group input {
+            width: 100%;
+            padding: 9px;
+            background: #0d0d0d;
+            border: 1px solid #ff0055;
+            border-radius: 6px;
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .success-message {
+            background: #171717;
+            border: 2px solid #00ff66;
+            color: #00ff66;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #00ff66;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Кнопка Кошика -->
+    <button class="cart-icon-btn" onclick="toggleCart()">
+        🛒 <span>Кошик</span>
+        {% if cart %}
+            <span class="cart-count">{{ cart|length }}</span>
+        {% endif %}
+    </button>
+
+    <h1>VICTORIA SHOP</h1>
+
+    {% if success %}
+    <div class="success-message">
+        ✔ Дякуємо! Ваше замовлення успішно оформлено!
+    </div>
+    {% endif %}
+
+    <h2>Товари:</h2>
+    <div class="products">
+        {% for product in products %}
+        <div class="card">
+            <img src="{{ product.main_image }}" alt="{{ product.name }}" onclick="openProductModal({{ product.id }})">
+            <div>
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.price }} грн</p>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="openProductModal({{ product.id }})">Огляд</button>
+                <a href="/add_to_cart/{{ product.id }}" class="btn">В кошик</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+<!-- Модальне вікно перегляду товару -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeProductModal()">&times;</span>
+            <h2 id="modalTitle">Назва товару</h2>
+            
+            <img id="mainGalleryImg" class="gallery-main-img" src="" alt="Товар">
+            <div class="gallery-thumbs" id="thumbsContainer"></div>
+            
+            <p id="modalDescription" style="color: #ccc; line-height: 1.5; margin-bottom: 15px;"></p>
+            <h3 id="modalPrice" style="color: #ff3300; text-shadow: 0 0 5px #ff3300;"></h3>
+            
+            <a id="modalAddToCartBtn" href="#" class="btn" style="width: 100%; text-align: center; margin-top: 10px;">Додати в кошик</a>
+        </div>
+    </div>
+
+    <!-- Модальне вікно кошика -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="toggleCart()">&times;</span>
+            <h2>Ваш кошик</h2>
+            
+            <div id="cartView">
+                {% if cart %}
+                    <ul class="cart-list">
+                        {% for item in cart %}
+                        <li class="cart-item">
+                            <div>
+                                <strong>{{ item.name }}</strong><br>
+                                <small style="color: #888;">{{ item.quantity }} шт. × {{ item.price }} грн</small>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span style="color: #ff3300; font-weight: bold;">{{ item.price * item.quantity }} грн</span>
+                                <a href="/remove_from_cart/{{ item.id }}" class="remove-btn" title="Видалити з кошика">❌</a>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    <h3 style="margin-top: 20px;">Загальна сума: {{ total }} грн</h3>
+                    <button class="btn" style="width: 100%; margin-top: 15px;" onclick="showCheckout()">Перейти до замовлення ➔</button>
+                {% else %}
+                    <p style="color: #888; text-align: center;">Кошик порожній.</p>
+                {% endif %}
+            </div>
+
+            <!-- Форма замовлення -->
+            <div class="checkout-form" id="checkoutForm" style="display: none;">
+                <h2>Оформлення замовлення</h2>
+                <form action="/checkout" method="POST">
+                    <div class="form-group">
+                        <label>Ім'я та Прізвище:</label>
+                        <input type="text" name="name" required placeholder="Введіть ім'я">
+                    </div>
+                    <div class="form-group">
+                        <label>Номер телефону:</label>
+                        <input type="tel" name="phone" required placeholder="+380...">
+                    </div>
+                    <div class="form-group">
+                        <label>Адреса / Нова Пошта:</label>
+                        <input type="text" name="address" required placeholder="Місто, № відділення">
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Підтвердити замовлення</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Передаємо масив товарів прямо в JS
+        var allProducts = {{ products|tojson }};
+
+        function toggleCart() {
+            var modal = document.getElementById('cartModal');
+            modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function showCheckout() {
+            document.getElementById('cartView').style.display = 'none';
+            document.getElementById('checkoutForm').style.display = 'block';
+        }
+
+        function openProductModal(productId) {
+            var product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+document.getElementById('modalTitle').innerText = product.name;
+            document.getElementById('modalDescription').innerText = product.description;
+            document.getElementById('modalPrice').innerText = product.price + ' грн';
+            document.getElementById('modalAddToCartBtn').href = '/add_to_cart/' + product.id;
+
+            var mainImg = document.getElementById('mainGalleryImg');
+            mainImg.src = product.main_image;
+
+            var thumbsContainer = document.getElementById('thumbsContainer');
+            thumbsContainer.innerHTML = '';
+
+            if (product.images && product.images.length > 0) {
+                product.images.forEach(function(imgUrl, index) {
+                    var thumb = document.createElement('img');
+                    thumb.src = imgUrl;
+                    thumb.className = 'gallery-thumb' + (index === 0 ? ' active' : '');
+                    thumb.onclick = function() {
+                        mainImg.src = imgUrl;
+                        document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                        thumb.classList.add('active');
+                    };
+                    thumbsContainer.appendChild(thumb);
+                });
+            }
+
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
